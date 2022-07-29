@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.1",
+	"id": "obsidian-day-and-night",
+	"name": "Day and Night Plugin",
+	"version": "1.0.0",
 	"minAppVersion": "0.12.0",
 	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"isDesktopOnly": false
+	"author": "Kevin Patel",
+	"authorUrl": "https://github.com/CyberT17",
+	"isDesktopOnly": true
 }
