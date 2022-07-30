@@ -1,17 +1,12 @@
 import moment from "moment";
 import {
 	App,
-	Editor,
-	MarkdownView,
-	Modal,
 	MomentFormatComponent,
 	Notice,
 	Plugin,
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-import { type } from "os";
-import { text } from "stream/consumers";
 
 // Remember to rename these classes and interfaces!
 
