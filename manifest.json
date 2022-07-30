@@ -1,6 +1,6 @@
 {
 	"id": "obsidian-day-and-night",
-	"name": "Day and Night Plugin",
+	"name": "Day and Night",
 	"version": "1.0.0",
 	"minAppVersion": "0.12.0",
 	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
