@@ -1,3 +1,4 @@
+import moment from "moment";
 import {
 	App,
 	Editor,
@@ -9,6 +10,7 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
+import { type } from "os";
 import { text } from "stream/consumers";
 
 // Remember to rename these classes and interfaces!
@@ -57,18 +59,22 @@ export default class DayAndNight extends Plugin {
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(
-			window.setInterval(() => console.log("setInterval"), 5 * 60 * 1000)
+			window.setInterval(() => {
+				console.log("Switched Theme");
+				this.updateTheme();
+			}, 60000)
 		);
 	}
 
 	onunload() {}
 
 	async updateTheme() {
-		let currentTheme = this.settings.dayActive
-			? this.settings.dayTheme
-			: this.settings.nightTheme;
+		let currentTheme = this.getThemeToApply();
 
-		console.log("Toggled Theme " + currentTheme);
+		this.setTheme(currentTheme);
+	}
+
+	private setTheme(currentTheme: string) {
 		// @ts-ignore
 		this.app.setTheme(currentTheme);
 		// @ts-ignore
@@ -76,9 +82,33 @@ export default class DayAndNight extends Plugin {
 		this.app.workspace.trigger("css-change");
 	}
 
+	private getThemeToApply(): string {
+		let dayDate: Date = moment(
+			this.settings.dayTime,
+			moment.HTML5_FMT.TIME
+		).toDate();
+
+		let nightDate: Date = moment(
+			this.settings.nightTime,
+			moment.HTML5_FMT.TIME
+		).toDate();
+
+		if (moment().isBefore(dayDate)) {
+			return this.settings.dayTheme;
+		} else if (moment().isSameOrAfter(nightDate)) {
+			return this.settings.nightTheme;
+		}
+		return "";
+	}
+
 	async switchTheme() {
-		this.settings.dayActive = !this.settings.dayActive;
-		this.updateTheme();
+		// @ts-ignore
+		let currentTheme = this.app.getTheme();
+		if (currentTheme === this.settings.dayTheme) {
+			this.setTheme(this.settings.nightTheme);
+		} else {
+			this.setTheme(this.settings.dayTheme);
+		}
 	}
 
 	async loadSettings() {
@@ -181,7 +211,6 @@ class DayAndNightSettingTab extends PluginSettingTab {
 
 interface DayAndNightSettings {
 	pluginEnabled: boolean;
-	dayActive: boolean;
 	dayTheme: string;
 	dayTime: string;
 	nightTheme: string;
