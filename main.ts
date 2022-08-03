@@ -70,6 +70,8 @@ export default class DayAndNight extends Plugin {
 	private setTheme(currentTheme: string) {
 		// @ts-ignore
 		this.app.setTheme(currentTheme);
+		this.settings.currentTheme = currentTheme;
+		console.log(currentTheme);
 		// @ts-ignore
 		this.app.vault.setConfig("theme", currentTheme);
 		this.app.workspace.trigger("css-change");
@@ -95,9 +97,8 @@ export default class DayAndNight extends Plugin {
 	}
 
 	async switchTheme() {
-		// @ts-ignore
-		let currentTheme = this.app.getTheme();
-		if (currentTheme === this.settings.dayTheme) {
+		this.settings.currentTheme = this.getThemeToApply();
+		if (this.settings.currentTheme === this.settings.dayTheme) {
 			this.setTheme(this.settings.nightTheme);
 		} else {
 			this.setTheme(this.settings.dayTheme);
@@ -213,6 +214,7 @@ class DayAndNightSettingTab extends PluginSettingTab {
 
 interface DayAndNightSettings {
 	pluginEnabled: boolean;
+	currentTheme: string;
 	dayTheme: string;
 	dayTime: string;
 	nightTheme: string;
