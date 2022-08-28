@@ -13,3 +13,7 @@ An Obsidian plugin to automatically toggle themes between day theme and night th
 -   Automatically switch between day (light) and night (dark) theme based on a schedule
 -   Quick theme toggle button in the left side ribbon
 -   Enable/Disable plugin with the plugin settings
+
+## Future Features
+
+-   Ribbon icon to toggle Day and Night Theme on the fly
