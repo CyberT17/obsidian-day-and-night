@@ -1,21 +1,29 @@
+import { throws } from "assert";
 import moment from "moment";
 import {
 	App,
 	MomentFormatComponent,
-	Notice,
 	Plugin,
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
 
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	mySetting: string;
+interface DayAndNightSettings {
+	pluginEnabled: boolean;
+	currentTheme: string;
+	dayTheme: string;
+	dayTime: string;
+	nightTheme: string;
+	nightTime: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: "default",
+const DEFAULT_SETTINGS: DayAndNightSettings = {
+	pluginEnabled: false,
+	currentTheme: "Light",
+	dayTheme: "Light",
+	dayTime: "10:00",
+	nightTheme: "obsidian",
+	nightTime: "15:00",
 };
 
 export default class DayAndNight extends Plugin {
@@ -24,20 +32,6 @@ export default class DayAndNight extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		await this.updateTheme();
-
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon(
-			"switch",
-			"Toggle Theme",
-			(evt: MouseEvent) => {
-				// Called when the user clicks the icon.
-				new Notice("Toggled Theme");
-				this.switchTheme();
-			}
-		);
-
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass("my-plugin-ribbon-class");
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new DayAndNightSettingTab(this.app, this));
@@ -210,13 +204,4 @@ class DayAndNightSettingTab extends PluginSettingTab {
 					});
 			});
 	}
-}
-
-interface DayAndNightSettings {
-	pluginEnabled: boolean;
-	currentTheme: string;
-	dayTheme: string;
-	dayTime: string;
-	nightTheme: string;
-	nightTime: string;
 }
