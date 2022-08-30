@@ -65,7 +65,6 @@ export default class DayAndNight extends Plugin {
 		// @ts-ignore
 		this.app.setTheme(currentTheme);
 		this.settings.currentTheme = currentTheme;
-		console.log(currentTheme);
 		// @ts-ignore
 		this.app.vault.setConfig("theme", currentTheme);
 		this.app.workspace.trigger("css-change");
@@ -82,12 +81,13 @@ export default class DayAndNight extends Plugin {
 			moment.HTML5_FMT.TIME
 		).toDate();
 
-		if (moment().isBefore(dayDate)) {
+		if (moment().isAfter(dayDate)) {
 			return this.settings.dayTheme;
 		} else if (moment().isSameOrAfter(nightDate)) {
 			return this.settings.nightTheme;
 		}
-		return "";
+		// @ts-ignore
+		return this.app.vault.getConfig("theme");
 	}
 
 	async switchTheme() {
