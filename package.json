@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-day-and-night",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"version": "1.0.1",
+	"description": "An Obsidian plugin to automatically toggle themes between day theme and night theme on a set time schedule.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
