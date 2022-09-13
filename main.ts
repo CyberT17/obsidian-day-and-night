@@ -57,8 +57,11 @@ export default class DayAndNight extends Plugin {
 			return;
 		}
 		let currentTheme = this.getThemeToApply();
-
-		this.setTheme(currentTheme);
+		
+		// @ts-ignore
+		if(this.app.vault.getConfig("theme") != currentTheme) {
+			this.setTheme(currentTheme);
+		}
 	}
 
 	private setTheme(currentTheme: string) {
@@ -81,9 +84,9 @@ export default class DayAndNight extends Plugin {
 			moment.HTML5_FMT.TIME
 		).toDate();
 
-		if (moment().isAfter(dayDate)) {
+		if (moment().isAfter(dayDate) && moment().isBefore(nightDate)) {
 			return this.settings.dayTheme;
-		} else if (moment().isSameOrAfter(nightDate)) {
+		} else if (moment().isSameOrAfter(nightDate) || moment().isBefore(dayDate)) {
 			return this.settings.nightTheme;
 		}
 		// @ts-ignore
@@ -165,6 +168,7 @@ class DayAndNightSettingTab extends PluginSettingTab {
 			);
 		new Setting(this.containerEl)
 			.setName("Night Start Time")
+			.setDesc("24-hour format")
 			.addMomentFormat((format: MomentFormatComponent) => {
 				format
 					.setDefaultFormat("HH:mm")
@@ -193,6 +197,7 @@ class DayAndNightSettingTab extends PluginSettingTab {
 			);
 		new Setting(this.containerEl)
 			.setName("Day Start Time")
+			.setDesc("24-hour format")
 			.addMomentFormat((format: MomentFormatComponent) => {
 				format
 					.setDefaultFormat("HH:mm")
