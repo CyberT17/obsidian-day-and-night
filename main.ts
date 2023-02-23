@@ -6,23 +6,7 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-
-interface DayAndNightSettings {
-	// General Settings
-	pluginEnabled: boolean;
-	currentTheme: string;
-	currentColorScheme: string;
-
-	// Day Settings
-	dayColorScheme: string;
-	dayTime: string;
-	dayCommunityTheme: string;
-
-	// Night Settings
-	nightColorScheme: string;
-	nightTime: string;
-	nightCommunityTheme: string;
-}
+import { DayAndNightSettings } from "./DayAndNightSettings";
 
 const DEFAULT_SETTINGS: DayAndNightSettings = {
 	pluginEnabled: false,
