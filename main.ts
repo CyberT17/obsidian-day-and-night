@@ -1,4 +1,3 @@
-import { throws } from "assert";
 import moment from "moment";
 import {
 	App,
@@ -9,21 +8,34 @@ import {
 } from "obsidian";
 
 interface DayAndNightSettings {
+	// General Settings
 	pluginEnabled: boolean;
 	currentTheme: string;
-	dayTheme: string;
+	currentColorScheme: string;
+
+	// Day Settings
+	dayColorScheme: string;
 	dayTime: string;
-	nightTheme: string;
+	dayCommunityTheme: string;
+
+	// Night Settings
+	nightColorScheme: string;
 	nightTime: string;
+	nightCommunityTheme: string;
 }
 
 const DEFAULT_SETTINGS: DayAndNightSettings = {
 	pluginEnabled: false,
-	currentTheme: "Light",
-	dayTheme: "Light",
+	currentTheme: "",
+	currentColorScheme: "moonstone",
+
+	dayColorScheme: "moonstone",
 	dayTime: "10:00",
-	nightTheme: "obsidian",
+	dayCommunityTheme: "",
+
+	nightColorScheme: "obsidian",
 	nightTime: "15:00",
+	nightCommunityTheme: "",
 };
 
 export default class DayAndNight extends Plugin {
@@ -46,7 +58,7 @@ export default class DayAndNight extends Plugin {
 		this.registerInterval(
 			window.setInterval(() => {
 				this.updateTheme();
-			}, 60000)
+			}, 10000)
 		);
 	}
 
@@ -56,24 +68,32 @@ export default class DayAndNight extends Plugin {
 		if (!this.settings.pluginEnabled) {
 			return;
 		}
-		let currentTheme = this.getThemeToApply();
-		
+		const { currentTheme, currentColorScheme } = this.getThemeToApply();
 		// @ts-ignore
-		if(this.app.vault.getConfig("theme") != currentTheme) {
-			this.setTheme(currentTheme);
+		if (this.app.vault.getConfig("theme") != currentTheme) {
+			this.setTheme(currentTheme, currentColorScheme);
 		}
 	}
 
-	private setTheme(currentTheme: string) {
+	private setTheme(currentTheme: string, currentColorScheme: string) {
+		// Set Color Scheme
 		// @ts-ignore
-		this.app.setTheme(currentTheme);
-		this.settings.currentTheme = currentTheme;
+		this.app.setTheme(currentColorScheme);
+		this.settings.currentColorScheme = currentColorScheme;
 		// @ts-ignore
-		this.app.vault.setConfig("theme", currentTheme);
+		this.app.vault.setConfig("theme", currentColorScheme);
+
+		// Set Theme
+		//@ts-ignore
+		this.app.customCss.setTheme(currentTheme);
+
 		this.app.workspace.trigger("css-change");
 	}
 
-	private getThemeToApply(): string {
+	private getThemeToApply(): {
+		currentTheme: string;
+		currentColorScheme: string;
+	} {
 		let dayDate: Date = moment(
 			this.settings.dayTime,
 			moment.HTML5_FMT.TIME
@@ -83,23 +103,22 @@ export default class DayAndNight extends Plugin {
 			this.settings.nightTime,
 			moment.HTML5_FMT.TIME
 		).toDate();
+		// @ts-ignore
+		let currentTheme = this.app.vault.getConfig("theme");
+		// @ts-ignore
+		let currentColorScheme = this.app.customCss.theme;
 
 		if (moment().isAfter(dayDate) && moment().isBefore(nightDate)) {
-			return this.settings.dayTheme;
-		} else if (moment().isSameOrAfter(nightDate) || moment().isBefore(dayDate)) {
-			return this.settings.nightTheme;
+			currentTheme = this.settings.dayCommunityTheme;
+			currentColorScheme = this.settings.dayColorScheme;
+		} else if (
+			moment().isSameOrAfter(nightDate) ||
+			moment().isBefore(dayDate)
+		) {
+			currentTheme = this.settings.nightCommunityTheme;
+			currentColorScheme = this.settings.nightColorScheme;
 		}
-		// @ts-ignore
-		return this.app.vault.getConfig("theme");
-	}
-
-	async switchTheme() {
-		this.settings.currentTheme = this.getThemeToApply();
-		if (this.settings.currentTheme === this.settings.dayTheme) {
-			this.setTheme(this.settings.nightTheme);
-		} else {
-			this.setTheme(this.settings.dayTheme);
-		}
+		return { currentTheme, currentColorScheme };
 	}
 
 	async loadSettings() {
@@ -116,6 +135,9 @@ export default class DayAndNight extends Plugin {
 }
 
 class DayAndNightSettingTab extends PluginSettingTab {
+	DARK_COLOR_SCHEME_KEY = "obsidian";
+	LIGHT_COLOR_SCHEME_KEY = "moonstone";
+
 	plugin: DayAndNight;
 
 	constructor(app: App, plugin: DayAndNight) {
@@ -154,18 +176,31 @@ class DayAndNightSettingTab extends PluginSettingTab {
 
 	private addNightSettings(): void {
 		new Setting(this.containerEl)
+			.setName("Night Color Scheme")
+			.setDesc("Select a Night Color Scheme")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(this.LIGHT_COLOR_SCHEME_KEY, "Light")
+					.addOption(this.DARK_COLOR_SCHEME_KEY, "Dark")
+					.setValue(this.plugin.settings.nightColorScheme)
+					.onChange((value) => {
+						this.plugin.settings.nightColorScheme = value;
+						this.plugin.saveData(this.plugin.settings);
+					})
+			);
+		new Setting(this.containerEl)
 			.setName("Night Theme")
 			.setDesc("Select a Night Theme")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption("Light", "Light")
-					.addOption("obsidian", "Dark")
-					.setValue(this.plugin.settings.nightTheme)
+					.addOptions(this.getAllCommunityThemes())
+					.setValue(this.plugin.settings.nightCommunityTheme)
 					.onChange((value) => {
-						this.plugin.settings.nightTheme = value;
+						this.plugin.settings.nightCommunityTheme = value;
 						this.plugin.saveData(this.plugin.settings);
 					})
 			);
+
 		new Setting(this.containerEl)
 			.setName("Night Start Time")
 			.setDesc("24-hour format")
@@ -183,15 +218,27 @@ class DayAndNightSettingTab extends PluginSettingTab {
 
 	private addDaySettings(): void {
 		new Setting(this.containerEl)
+			.setName("Day Color Scheme")
+			.setDesc("Select a Day Color Scheme")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption(this.LIGHT_COLOR_SCHEME_KEY, "Light")
+					.addOption(this.DARK_COLOR_SCHEME_KEY, "Dark")
+					.setValue(this.plugin.settings.dayColorScheme)
+					.onChange((value) => {
+						this.plugin.settings.dayColorScheme = value;
+						this.plugin.saveData(this.plugin.settings);
+					})
+			);
+		new Setting(this.containerEl)
 			.setName("Day Theme")
 			.setDesc("Select a Day Theme")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption("Light", "Light")
-					.addOption("obsidian", "Dark")
-					.setValue(this.plugin.settings.dayTheme)
+					.addOptions(this.getAllCommunityThemes())
+					.setValue(this.plugin.settings.dayCommunityTheme)
 					.onChange((value) => {
-						this.plugin.settings.dayTheme = value;
+						this.plugin.settings.dayCommunityTheme = value;
 						this.plugin.saveData(this.plugin.settings);
 					})
 			);
@@ -208,5 +255,16 @@ class DayAndNightSettingTab extends PluginSettingTab {
 						this.plugin.saveData(this.plugin.settings);
 					});
 			});
+	}
+
+	private getAllCommunityThemes(): Record<string, string> {
+		// @ts-ignore
+		const themes = Object.keys(this.app.customCss.themes);
+
+		const communityThemesRecord: Record<string, string> = { "": "" };
+		for (const theme of themes) {
+			communityThemesRecord[theme] = theme;
+		}
+		return communityThemesRecord;
 	}
 }
