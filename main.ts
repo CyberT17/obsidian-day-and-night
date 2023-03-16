@@ -49,7 +49,7 @@ export default class DayAndNight extends Plugin {
 		}
 		const { currentTheme, currentColorScheme } = this.getThemeToApply();
 		// @ts-ignore
-		if (this.app.vault.getConfig("theme") != currentTheme) {
+		if (this.app.customCss.theme != currentTheme) {
 			this.setTheme(currentTheme, currentColorScheme);
 		}
 	}
