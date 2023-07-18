@@ -48,8 +48,13 @@ export default class DayAndNight extends Plugin {
 			return;
 		}
 		const { currentTheme, currentColorScheme } = this.getThemeToApply();
-		// @ts-ignore
-		if (this.app.customCss.theme != currentTheme) {
+
+		if (
+			// @ts-ignore
+			this.app.customCss.theme != currentTheme ||
+			// @ts-ignore
+			this.app.vault.getConfig("theme") != currentColorScheme
+		) {
 			this.setTheme(currentTheme, currentColorScheme);
 		}
 	}
@@ -73,12 +78,12 @@ export default class DayAndNight extends Plugin {
 		currentTheme: string;
 		currentColorScheme: string;
 	} {
-		let dayDate: Date = moment(
+		const dayDate: Date = moment(
 			this.settings.dayTime,
 			moment.HTML5_FMT.TIME
 		).toDate();
 
-		let nightDate: Date = moment(
+		const nightDate: Date = moment(
 			this.settings.nightTime,
 			moment.HTML5_FMT.TIME
 		).toDate();
