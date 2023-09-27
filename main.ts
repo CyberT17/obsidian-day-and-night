@@ -2,20 +2,7 @@ import moment from "moment";
 import { Plugin } from "obsidian";
 import { DayAndNightSettings } from "./DayAndNightSettings";
 import { DayAndNightSettingTab } from "./DayAndNightSettingTab";
-
-const DEFAULT_SETTINGS: DayAndNightSettings = {
-	pluginEnabled: false,
-	currentTheme: "",
-	currentColorScheme: "moonstone",
-
-	dayColorScheme: "moonstone",
-	dayTime: "10:00",
-	dayCommunityTheme: "",
-
-	nightColorScheme: "obsidian",
-	nightTime: "15:00",
-	nightCommunityTheme: "",
-};
+import { DefaultSettings } from "DefaultSettings";
 
 export default class DayAndNight extends Plugin {
 	settings: DayAndNightSettings;
@@ -108,7 +95,7 @@ export default class DayAndNight extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
-			DEFAULT_SETTINGS,
+			DefaultSettings,
 			await this.loadData()
 		);
 	}
