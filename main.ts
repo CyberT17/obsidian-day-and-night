@@ -10,6 +10,7 @@ export default class DayAndNight extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		await this.updateTheme();
+		await this.addRibbonIconToToolbar();
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new DayAndNightSettingTab(this.app, this));
@@ -98,6 +99,16 @@ export default class DayAndNight extends Plugin {
 			DefaultSettings,
 			await this.loadData()
 		);
+	}
+
+	async addRibbonIconToToolbar() {
+		this.addRibbonIcon(this.getRibbonIconName(), "Add Ribbon Icon", () => {
+			console.log("Added Ribbon Icon");
+		});
+	}
+
+	private getRibbonIconName() {
+		return "sun";
 	}
 
 	async saveSettings() {
