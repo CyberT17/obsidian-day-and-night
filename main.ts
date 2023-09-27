@@ -102,7 +102,7 @@ export default class DayAndNight extends Plugin {
 	}
 
 	async addRibbonIconToToolbar() {
-		this.addRibbonIcon(this.getRibbonIconName(), "Add Ribbon Icon", () => {
+		this.addRibbonIcon(this.getRibbonIconName(), "Toggle Theme", () => {
 			console.log("Added Ribbon Icon");
 		});
 	}
