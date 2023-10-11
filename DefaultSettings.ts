@@ -1,15 +1,17 @@
-import { DayAndNightSettings } from "./DayAndNightSettings";
+import { DayAndNightSettings } from './DayAndNightSettings';
 
 export const DefaultSettings: DayAndNightSettings = {
 	pluginEnabled: false,
-	currentTheme: "",
-	currentColorScheme: "moonstone",
+	currentTheme: '',
+	currentColorScheme: 'moonstone',
 
-	dayColorScheme: "moonstone",
-	dayTime: "10:00",
-	dayCommunityTheme: "",
+	dayColorScheme: 'moonstone',
+	dayTime: '10:00',
+	dayTheme: '',
 
-	nightColorScheme: "obsidian",
-	nightTime: "15:00",
-	nightCommunityTheme: "",
+	nightColorScheme: 'obsidian',
+	nightTime: '15:00',
+	nightTheme: '',
+
+	pauseThemeToggle: false
 };
