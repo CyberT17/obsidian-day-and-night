@@ -7,10 +7,13 @@ export interface DayAndNightSettings {
 	// Day Settings
 	dayColorScheme: string;
 	dayTime: string;
-	dayCommunityTheme: string;
+	dayTheme: string;
 
 	// Night Settings
 	nightColorScheme: string;
 	nightTime: string;
-	nightCommunityTheme: string;
+	nightTheme: string;
+
+	// Ribbon Icon
+	pauseThemeToggle: boolean;
 }
