@@ -44,7 +44,6 @@ export default class DayAndNight extends Plugin {
 		if (!this.settings.pauseThemeToggle && (this.getCurrentTheme() != themeToApply || this.getCurrentColorScheme() != colorSchemeToApply)) {
 			this.setTheme(themeToApply, colorSchemeToApply);
 		} else if (this.getCurrentTheme() == themeToApply || this.getCurrentColorScheme() == colorSchemeToApply) {
-			this.settings.pauseThemeToggle = false;
 			this.saveSettings();
 		}
 	}
