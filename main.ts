@@ -1,17 +1,17 @@
-import moment from 'moment';
-import { Plugin, setIcon } from 'obsidian';
+import { Plugin, setIcon, moment as obsidianMoment } from 'obsidian';
+const moment = obsidianMoment as unknown as typeof import('moment');
 import { DayAndNightSettings } from './DayAndNightSettings';
 import { DayAndNightSettingTab } from './DayAndNightSettingTab';
-import { DefaultSettings } from 'DefaultSettings';
+import { DefaultSettings } from './DefaultSettings';
 
 export default class DayAndNight extends Plugin {
-	settings: DayAndNightSettings;
+	settings!: DayAndNightSettings;
 
 	async onload() {
 		await this.loadSettings();
 
 		this.settings.pauseThemeToggle = false;
-		this.saveSettings();
+		await this.saveSettings();
 
 		await this.updateTheme();
 		await this.addRibbonIconToToolbar();
@@ -21,14 +21,14 @@ export default class DayAndNight extends Plugin {
 
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+		this.registerDomEvent(activeDocument, 'click', (evt: MouseEvent) => {
 			// console.log("click", evt);
 		});
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(
 			window.setInterval(() => {
-				this.updateTheme();
+				void this.updateTheme();
 			}, 10000)
 		);
 	}
@@ -42,19 +42,19 @@ export default class DayAndNight extends Plugin {
 		const { themeToApply, colorSchemeToApply } = this.getThemeToApply();
 
 		if (!this.settings.pauseThemeToggle && (this.getCurrentTheme() != themeToApply || this.getCurrentColorScheme() != colorSchemeToApply)) {
-			this.setTheme(themeToApply, colorSchemeToApply);
+			await this.setTheme(themeToApply, colorSchemeToApply);
 		} else if (this.getCurrentTheme() == themeToApply || this.getCurrentColorScheme() == colorSchemeToApply) {
-			this.saveSettings();
+			await this.saveSettings();
 		}
 	}
 
-	private setTheme(currentTheme: string, currentColorScheme: string) {
+	private async setTheme(currentTheme: string, currentColorScheme: string) {
 		this.setCurrentColorScheme(currentColorScheme);
 		this.setCurrentTheme(currentTheme);
 
 		this.app.workspace.trigger('css-change');
 
-		this.saveSettings();
+		await this.saveSettings();
 	}
 
 	private getThemeToApply(): { themeToApply: string; colorSchemeToApply: string } {
@@ -79,10 +79,10 @@ export default class DayAndNight extends Plugin {
 	}
 
 	async addRibbonIconToToolbar() {
-		const ribbonIcon = this.addRibbonIcon(this.getRibbonIconName(), 'Toggle Theme', () => {
-			this.toggleTheme();
+		const ribbonIcon = this.addRibbonIcon(this.getRibbonIconName(), 'Toggle Theme', async () => {
+			await this.toggleTheme();
 			this.settings.pauseThemeToggle = true;
-			this.saveSettings();
+			await this.saveSettings();
 
 			// This lets us change the icon of the ribbon button on the fly based on what theme is active
 			setIcon(ribbonIcon, this.getRibbonIconName());
@@ -93,11 +93,11 @@ export default class DayAndNight extends Plugin {
 		return this.isCurrentThemeNightTheme() ? 'sun' : 'moon';
 	}
 
-	private toggleTheme() {
+	private async toggleTheme() {
 		if (this.isCurrentThemeNightTheme()) {
-			this.setTheme(this.settings.dayTheme, this.settings.dayColorScheme);
+			await this.setTheme(this.settings.dayTheme, this.settings.dayColorScheme);
 		} else {
-			this.setTheme(this.settings.nightTheme, this.settings.nightColorScheme);
+			await this.setTheme(this.settings.nightTheme, this.settings.nightColorScheme);
 		}
 	}
 

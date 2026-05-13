@@ -17,9 +17,7 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {
-			text: 'Settings for Day and Night plugin.'
-		});
+		new Setting(containerEl).setName('Scheduler configuration').setHeading();
 
 		this.addPluginToggleSetting();
 		if (this.plugin.settings.pluginEnabled) {
@@ -31,9 +29,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 	private addPluginToggleSetting(): void {
 		new Setting(this.containerEl).setName('Enable Day and Night').addToggle((value) => {
 			value.setValue(this.plugin.settings.pluginEnabled);
-			value.onChange((value) => {
+			value.onChange(async (value) => {
 				this.plugin.settings.pluginEnabled = value;
-				this.plugin.saveData(this.plugin.settings);
+				await this.plugin.saveData(this.plugin.settings);
 				this.display();
 			});
 		});
@@ -48,9 +46,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 					.addOption(this.LIGHT_COLOR_SCHEME_KEY, 'Light')
 					.addOption(this.DARK_COLOR_SCHEME_KEY, 'Dark')
 					.setValue(this.plugin.settings.nightColorScheme)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.nightColorScheme = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					})
 			);
 		new Setting(this.containerEl)
@@ -60,9 +58,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 				dropdown
 					.addOptions(this.getAllCommunityThemes())
 					.setValue(this.plugin.settings.nightTheme)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.nightTheme = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					})
 			);
 
@@ -74,9 +72,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 					.setDefaultFormat('HH:mm')
 					.setPlaceholder('HH:mm')
 					.setValue(this.plugin.settings.nightTime)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.nightTime = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					});
 			});
 	}
@@ -90,9 +88,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 					.addOption(this.LIGHT_COLOR_SCHEME_KEY, 'Light')
 					.addOption(this.DARK_COLOR_SCHEME_KEY, 'Dark')
 					.setValue(this.plugin.settings.dayColorScheme)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.dayColorScheme = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					})
 			);
 		new Setting(this.containerEl)
@@ -102,9 +100,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 				dropdown
 					.addOptions(this.getAllCommunityThemes())
 					.setValue(this.plugin.settings.dayTheme)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.dayTheme = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					})
 			);
 		new Setting(this.containerEl)
@@ -115,9 +113,9 @@ export class DayAndNightSettingTab extends PluginSettingTab {
 					.setDefaultFormat('HH:mm')
 					.setPlaceholder('HH:mm')
 					.setValue(this.plugin.settings.dayTime)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.dayTime = value;
-						this.plugin.saveData(this.plugin.settings);
+						await this.plugin.saveData(this.plugin.settings);
 					});
 			});
 	}
