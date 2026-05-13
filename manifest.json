@@ -3,7 +3,7 @@
 	"name": "Day and Night",
 	"version": "1.3.1",
 	"minAppVersion": "1.0.0",
-	"description": "An Obsidian plugin to automatically toggle themes between day theme and night theme on a set time schedule.",
+	"description": "Automatically toggle themes between day theme and night theme on a set time schedule.",
 	"author": "Kevin Patel",
 	"authorUrl": "https://github.com/CyberT17",
 	"isDesktopOnly": true
