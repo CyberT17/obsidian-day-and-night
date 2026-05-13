@@ -29,7 +29,12 @@ jobs:
         run: |
           tag="${GITHUB_REF#refs/tags/}"
 
+          assets=("main.js" "manifest.json")
+          if [ -s "styles.css" ]; then
+            assets+=("styles.css")
+          fi
+
           gh release create "$tag" \
             --title="$tag" \
             --draft \
-            main.js manifest.json styles.css
+            "${assets[@]}"
